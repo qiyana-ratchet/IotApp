@@ -22,14 +22,40 @@
 
     <TextView
         android:id="@+id/soundValue"
-        android:layout_width="122dp"
-        android:layout_height="148dp"
-        android:layout_marginTop="300dp"
+        android:layout_width="225dp"
+        android:layout_height="85dp"
         android:text="0dB"
+        android:textAlignment="center"
         android:textSize="60sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.475" />
+
+    <TextView
+        android:id="@+id/resultText"
+        android:layout_width="350dp"
+        android:layout_height="120dp"
+        android:textAlignment="center"
+        android:textSize="60sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/soundValue"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/soundFace"
+        android:layout_width="136dp"
+        android:layout_height="138dp"
+        android:src="@drawable/ic_baseline_face_24"
+        app:layout_constraintBottom_toTopOf="@+id/soundValue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
