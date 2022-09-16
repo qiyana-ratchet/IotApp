@@ -18,14 +18,5 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/mobile_navigation" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="122dp"
-        android:layout_height="148dp"
-        android:layout_marginTop="241dp"
-        android:text="0dB"
-        android:textSize="60sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
