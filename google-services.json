@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "952826596984",
+    "project_id": "sungwonarduino",
+    "storage_bucket": "sungwonarduino.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952826596984:android:c1654cdfc466290fc1278d",
+        "android_client_info": {
+          "package_name": "com.example.iotapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "952826596984-16sjm6cg6egqod1qigirqtbo5ufn9lls.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.iotapp",
+            "certificate_hash": "391f147613c4b70db8af42b25c8aa2acc527e5e0"
+          }
+        },
+        {
+          "client_id": "952826596984-mv4uks7tgmefhik0mjlep3qoercpnur0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSZcb2vxJVODVScrRsEjPjIYMjww-f_Zw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "952826596984-mv4uks7tgmefhik0mjlep3qoercpnur0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
