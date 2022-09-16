@@ -1,26 +1,55 @@
 package com.example.iotapp
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.navigation.NavigationView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
+import com.example.iotapp.SoundData.currentSoundValMean
 import com.example.iotapp.databinding.ActivityMainBinding
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-
+    private var TAG = "테스트"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //
+        val db = Firebase.firestore
+        db.collection("data")
+            .whereEqualTo("TagSnapshot", "1")
+            .addSnapshotListener { value, e ->
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e)
+                    return@addSnapshotListener
+                }
 
+                val sensorData = ArrayList<String>()
+                for (doc in value!!) {
+                    doc.getString("value")?.let {
+                        sensorData.add(Gson().fromJson(it,Sensor::class.java).sound.toString())
+
+                        currentSoundValMean = meanOfSound(sensorData).toString()
+                        Log.d(TAG, "Current currentSoundValMean: $currentSoundValMean")
+
+
+                    }
+                }
+                Log.d(TAG, "Current Sensor Sound Data: $sensorData")
+            }
+
+        //
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -53,5 +82,15 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+    fun meanOfSound(list: ArrayList<String>): Int {
+        var sum = 0
+        for (num in list) {
+            sum += num.toInt()
+        }
+        return sum/(list.size)
+    }
+    class Sensor {
+        var sound: String? = null
     }
 }
