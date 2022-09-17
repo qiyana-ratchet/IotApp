@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var TAG = "테스트"
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen() //스플래시
         super.onCreate(savedInstanceState)
         //
         val db = Firebase.firestore
@@ -52,6 +54,10 @@ class MainActivity : AppCompatActivity() {
         //
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ///
+
+        ///
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
