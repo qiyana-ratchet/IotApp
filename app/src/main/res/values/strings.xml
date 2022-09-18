@@ -11,4 +11,6 @@
     <string name="menu_gallery">위치별 소음 </string>
     <string name="menu_slideshow">시간대별 소음</string>
     <string name="menu_vod">층간소음 교육 vod</string>
+    <string name="channel_name">테스트이름</string>
+    <string name="channel_description">이건테스트설명</string>
 </resources>
