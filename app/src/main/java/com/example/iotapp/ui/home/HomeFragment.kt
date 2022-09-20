@@ -90,11 +90,11 @@ class HomeFragment : Fragment() {
 
                     if (hourOfDay in 6..21) {
                         when {
-                            convertedDecibelValue >= 70 -> {
-                                binding.resultText.text = "아주 나쁨"
-                                binding.soundFace.setImageResource(R.drawable.ic_baseline_sentiment_very_dissatisfied_24)
-                                notifyNoise()
-                            }
+//                            convertedDecibelValue >= 70 -> {
+//                                binding.resultText.text = "아주 나쁨"
+//                                binding.soundFace.setImageResource(R.drawable.ic_baseline_sentiment_very_dissatisfied_24)
+//                                notifyNoise()
+//                            }
                             convertedDecibelValue >= 57 -> {
                                 binding.resultText.text = "나쁨"
                                 binding.soundFace.setImageResource(R.drawable.ic_baseline_sentiment_dissatisfied_24)
@@ -112,11 +112,11 @@ class HomeFragment : Fragment() {
                         }
                     } else {
                         when {
-                            convertedDecibelValue >= 65 -> {
-                                binding.resultText.text = "아주 나쁨"
-                                binding.soundFace.setImageResource(R.drawable.ic_baseline_sentiment_very_dissatisfied_24)
-                                notifyNoise()
-                            }
+//                            convertedDecibelValue >= 65 -> {
+//                                binding.resultText.text = "아주 나쁨"
+//                                binding.soundFace.setImageResource(R.drawable.ic_baseline_sentiment_very_dissatisfied_24)
+//                                notifyNoise()
+//                            }
                             convertedDecibelValue >= 52 -> {
                                 binding.resultText.text = "나쁨"
                                 binding.soundFace.setImageResource(R.drawable.ic_baseline_sentiment_dissatisfied_24)
