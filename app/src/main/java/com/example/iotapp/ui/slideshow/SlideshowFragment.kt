@@ -73,12 +73,13 @@ class SlideshowFragment : Fragment() {
 
         val valueList = ArrayList<Double>()
         val entries: ArrayList<BarEntry> = ArrayList()
-        val title = "걸음 수"
+        val title = "소음 값(dB)"
 
         //input data
-        for (i in 0..5) {
-            valueList.add(i * 100.1)
+        for (i in 1..24) {
+            valueList.add(((55+i).toDouble()))
         }
+        valueList.shuffle()
 
         //fit the data into a bar
         for (i in 0 until valueList.size) {
@@ -128,14 +129,14 @@ class SlideshowFragment : Fragment() {
 
         //좌측 값 hiding the left y-axis line, default true if not set
         val leftAxis: YAxis = barChart.getAxisLeft()
-        leftAxis.setDrawAxisLine(false)
-        leftAxis.textColor = Color.RED
+        leftAxis.setDrawAxisLine(true)
+        leftAxis.textColor = Color.BLUE
 
 
         //우측 값 hiding the right y-axis line, default true if not set
         val rightAxis: YAxis = barChart.getAxisRight()
         rightAxis.setDrawAxisLine(false)
-        rightAxis.textColor = Color.RED
+        rightAxis.textColor = Color.BLUE
 
 
         //바차트의 타이틀
@@ -144,7 +145,7 @@ class SlideshowFragment : Fragment() {
         legend.form = Legend.LegendForm.LINE
         //setting the text size of the legend
         legend.textSize = 11f
-        legend.textColor = Color.YELLOW
+        legend.textColor = Color.BLACK
         //setting the alignment of legend toward the chart
         legend.verticalAlignment = Legend.LegendVerticalAlignment.TOP
         legend.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
