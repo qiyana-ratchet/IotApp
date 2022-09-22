@@ -2,11 +2,13 @@ package com.example.iotapp.ui.slideshow
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.iotapp.MainActivity
 import com.example.iotapp.R
 import com.example.iotapp.databinding.FragmentSlideshowBinding
 import com.github.mikephil.charting.charts.BarChart
@@ -17,12 +19,17 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
+import java.time.LocalDate
 
 
 class SlideshowFragment : Fragment() {
 
     var barChart: BarChart? = null
     private var _binding: FragmentSlideshowBinding? = null
+    val timeData = ArrayList<String>()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -44,6 +51,7 @@ class SlideshowFragment : Fragment() {
 
         return root
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -75,6 +83,37 @@ class SlideshowFragment : Fragment() {
         val entries: ArrayList<BarEntry> = ArrayList()
         val title = "걸음 수"
 
+        ///
+        val db = Firebase.firestore
+        db.collection("timeData")
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    Log.d("시간", "${document.id} => ${document.data}")
+                    val tmp = document.data["value"] as String
+                    Log.d("시간", LocalDate.now().toString().substring(8, 10))
+                    Log.d("시간", document.id.toString().substring(8, 10))
+
+//                    Log.d("시간", document.data.toString().length.toString())
+//                    timeData.add(document.data.toString().length.toString())
+//                    Log.d("시간", timeData.toString())
+
+                    if (LocalDate.now().toString().substring(8, 10)
+                            .toInt() - document.id.toString().substring(8, 10).toInt() < 2
+                    ) {
+                        Log.d("시간", "${document.data["value"]}")
+
+                        timeData.add(Gson().fromJson(document.data["value"].toString(), Sensor::class.java).sound.toString())
+                    }
+//                    makeTimeData()
+                }
+                Log.d("시간", timeData.toString())
+            }
+            .addOnFailureListener { exception ->
+                Log.d("시간", "Error getting documents: ", exception)
+            }
+        ///
+
         //input data
         for (i in 0..5) {
             valueList.add(i * 100.1)
@@ -92,6 +131,14 @@ class SlideshowFragment : Fragment() {
         ///
         barChart.data = data
         barChart.invalidate()
+    }
+
+    private fun makeTimeData() {
+
+    }
+
+    class Sensor {
+        var sound: String? = null
     }
 
     private fun initBarChart(barChart: BarChart) {

@@ -74,7 +74,7 @@ class GalleryFragment : Fragment() {
                                 val convertedDecibelValue = (-3 * currentSound.toInt() / 40) + 95
                                 sensorData.add(convertedDecibelValue.toString())
                             }
-                            Log.d("이런", sensorData.toString())
+                            Log.d("테스트", sensorData.toString())
                             binding.matText1.text = (sensorData[0].toInt()+1).toString()+"dB"
                             binding.matText2.text = (sensorData[1].toInt()-2).toString()+"dB"
                             binding.matText3.text = (sensorData[2].toInt()-4).toString()+"dB"
