@@ -1,5 +1,5 @@
 package com.example.iotapp
 
 object SoundData {
-    var currentSoundValMean = ""
+    var currentSoundValMean = "0"
 }

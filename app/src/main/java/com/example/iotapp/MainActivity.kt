@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
 //        }
         //
         val db = Firebase.firestore
+
         db.collection("data")
             .whereEqualTo("TagSnapshot", "1")
             .addSnapshotListener { value, e ->

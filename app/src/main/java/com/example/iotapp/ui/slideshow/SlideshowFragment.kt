@@ -8,21 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.iotapp.MainActivity
 import com.example.iotapp.R
 import com.example.iotapp.databinding.FragmentSlideshowBinding
 import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.components.Description
-import com.github.mikephil.charting.components.Legend
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
+import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 class SlideshowFragment : Fragment() {
@@ -30,6 +28,7 @@ class SlideshowFragment : Fragment() {
     var barChart: BarChart? = null
     private var _binding: FragmentSlideshowBinding? = null
     val timeData = ArrayList<String>()
+    val tmpData = ArrayList<String>()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -72,6 +71,27 @@ class SlideshowFragment : Fragment() {
         barDataSet.setDrawValues(true)
         //setting the text size of the value of the bar
         barDataSet.valueTextSize = 15f
+        //데이터 투명하게
+        barDataSet.setDrawValues(false)
+        //
+    }
+
+    class MyXAxisFormatter : ValueFormatter() {
+        var currentDateTime: LocalDateTime = LocalDateTime.now()
+        override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+            var currentTime = currentDateTime.toString().substring(11,13).toInt()
+            val tmpDays = ArrayList<String>()
+            for (i in 0..24){
+                if(currentTime+i>=24){
+                    tmpDays.add((currentTime + i-24).toString()+"시")
+                }else {
+                    tmpDays.add((currentTime + i).toString()+"시")
+                }
+            }
+            val days:Array<String> = tmpDays.toTypedArray()
+
+            return days.getOrNull(value.toInt()) ?: value.toString()
+        }
     }
 
     private fun setWeek(barChart: BarChart) {
@@ -79,7 +99,7 @@ class SlideshowFragment : Fragment() {
 
         barChart.setScaleEnabled(false) //Zoom In/Out
 
-        val valueList = ArrayList<Double>()
+        val valueList = ArrayList<Int>()
         val entries: ArrayList<BarEntry> = ArrayList()
         val title = "소음 값(dB)"
 
@@ -99,43 +119,81 @@ class SlideshowFragment : Fragment() {
 //                    Log.d("시간", timeData.toString())
 
                     if (LocalDate.now().toString().substring(8, 10)
-                            .toInt() - document.id.toString().substring(8, 10).toInt() < 2
+                            .toInt() - document.id.toString().substring(8, 10).toInt() <= 1
                     ) {
                         Log.d("시간", "${document.data["value"]}")
 
                         timeData.add(Gson().fromJson(document.data["value"].toString(), Sensor::class.java).sound.toString())
                     }
-//                    makeTimeData()
                 }
+                makeTimeData()
                 Log.d("시간", timeData.toString())
+                Log.d("시간", tmpData.toString())
+                ///
+                //input data
+                for (i in 0..23) {
+                    if(i>=timeData.size){
+                        valueList.add(timeData[timeData.size-1].toInt())
+                    }
+                    valueList.add(timeData[i].toInt())
+                }
+
+                //fit the data into a bar
+                for (i in 0 until valueList.size) {
+                    val barEntry = BarEntry(i.toFloat(), valueList[i].toFloat())
+                    entries.add(barEntry)
+                }
+                val barDataSet = BarDataSet(entries, title)
+                val data = BarData(barDataSet)
+                // initBarDataSet
+                initBarDataSet(barDataSet)
+                // xAxis data formatter
+                barChart.xAxis.valueFormatter = MyXAxisFormatter()
+                // put data & invalidate
+                barChart.data = data
+                barChart.invalidate()
             }
             .addOnFailureListener { exception ->
                 Log.d("시간", "Error getting documents: ", exception)
             }
         ///
 
-        //input data
-        for (i in 1..24) {
-            valueList.add(((55+i).toDouble()))
-        }
-        valueList.shuffle()
-
-        //fit the data into a bar
-        for (i in 0 until valueList.size) {
-            val barEntry = BarEntry(i.toFloat(), valueList[i].toFloat())
-            entries.add(barEntry)
-        }
-        val barDataSet = BarDataSet(entries, title)
-        val data = BarData(barDataSet)
-        ///
-        initBarDataSet(barDataSet)
-        ///
-        barChart.data = data
-        barChart.invalidate()
+//        //input data
+//        for (i in 0..24) {
+//            if(i>=timeData.size){
+//                valueList.add(timeData[timeData.size-1].toDouble())
+//            }
+//            valueList.add(timeData[i].toDouble())
+//        }
+//
+//        //fit the data into a bar
+//        for (i in 0 until valueList.size) {
+//            val barEntry = BarEntry(i.toFloat(), valueList[i].toFloat())
+//            entries.add(barEntry)
+//        }
+//        val barDataSet = BarDataSet(entries, title)
+//        val data = BarData(barDataSet)
+//        ///
+//        initBarDataSet(barDataSet)
+//        ///
+//        barChart.data = data
+//        barChart.invalidate()
     }
 
     private fun makeTimeData() {
-
+        var count=0
+        var tmp=-999
+        for(i: Int in 0 until timeData.size){
+            if(tmp<timeData[i].toInt()){
+                tmp=timeData[i].toInt()
+            }
+            count+=1
+            if(count==12){
+                tmpData.add(tmp.toString());
+                tmp=-999
+                count=0
+            }
+        }
     }
 
     class Sensor {
@@ -189,15 +247,15 @@ class SlideshowFragment : Fragment() {
         //바차트의 타이틀
         val legend: Legend = barChart.getLegend()
         //setting the shape of the legend form to line, default square shape
-        legend.form = Legend.LegendForm.LINE
+        legend.form = Legend.LegendForm.SQUARE
         //setting the text size of the legend
-        legend.textSize = 11f
+        legend.textSize = 15f
         legend.textColor = Color.BLACK
         //setting the alignment of legend toward the chart
         legend.verticalAlignment = Legend.LegendVerticalAlignment.TOP
         legend.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
         //setting the stacking direction of legend
-        legend.orientation = Legend.LegendOrientation.HORIZONTAL
+        legend.orientation = Legend.LegendOrientation.VERTICAL
         //setting the location of legend outside the chart, default false if not set
         legend.setDrawInside(false)
     }
