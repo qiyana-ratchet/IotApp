@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.slideshow.SlideshowFragment">
 
-    <com.github.mikephil.charting.charts.BarChart
+    <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart_week"
         android:layout_width="match_parent"
         android:layout_height="500dp"

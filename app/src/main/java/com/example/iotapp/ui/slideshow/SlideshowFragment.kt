@@ -11,10 +11,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.iotapp.R
 import com.example.iotapp.databinding.FragmentSlideshowBinding
 import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -25,7 +24,7 @@ import java.time.LocalDateTime
 
 class SlideshowFragment : Fragment() {
 
-    var barChart: BarChart? = null
+    var barChart: LineChart? = null
     private var _binding: FragmentSlideshowBinding? = null
     val timeData = ArrayList<String>()
     val tmpData = ArrayList<String>()
@@ -39,6 +38,7 @@ class SlideshowFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        Log.d("lifecycle","SlideShowFragment "+lifecycle.currentState.toString())
         val slideshowViewModel =
             ViewModelProvider(this).get(SlideshowViewModel::class.java)
 
@@ -53,27 +53,31 @@ class SlideshowFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.d("lifecycle","SlideShowFragment "+lifecycle.currentState.toString())
         _binding = null
     }
 
 
     private fun setChartView(view: View) {
-        var chartWeek = view.findViewById<BarChart>(R.id.chart_week)
+        var chartWeek = view.findViewById<LineChart>(R.id.chart_week)
         setWeek(chartWeek)
     }
 
-    private fun initBarDataSet(barDataSet: BarDataSet) {
-        //Changing the color of the bar
-        barDataSet.color = Color.parseColor("#304567")
-        //Setting the size of the form in the legend
-        barDataSet.formSize = 15f
-        //showing the value of the bar, default true if not set
-        barDataSet.setDrawValues(true)
-        //setting the text size of the value of the bar
-        barDataSet.valueTextSize = 15f
-        //데이터 투명하게
-        barDataSet.setDrawValues(false)
-        //
+    private fun initBarDataSet(lineDataSet: LineDataSet) {
+        // Changing the color of the bar
+        lineDataSet.color = Color.parseColor("#304567")
+        // Setting the size of the form in the legend
+        lineDataSet.formSize = 15f
+        // showing the value of the bar, default true if not set
+        lineDataSet.setDrawValues(true)
+        // setting the text size of the value of the bar
+        lineDataSet.valueTextSize = 15f
+        // 데이터 투명하게
+        lineDataSet.setDrawValues(false)
+        // 두께
+        lineDataSet.lineWidth = 8f
+
+
     }
 
     class MyXAxisFormatter : ValueFormatter() {
@@ -94,13 +98,15 @@ class SlideshowFragment : Fragment() {
         }
     }
 
-    private fun setWeek(barChart: BarChart) {
-        initBarChart(barChart)
+    private fun setWeek(lineChart: LineChart) {
+        initLineChart(lineChart)
 
-        barChart.setScaleEnabled(false) //Zoom In/Out
-
+        lineChart.setScaleEnabled(false) //Zoom In/Out
+        // 처음 텍스트 값 변경
+        lineChart.setNoDataText("그래프 로딩중 ...");
+        lineChart.setNoDataTextColor(R.color.black);
         val valueList = ArrayList<Int>()
-        val entries: ArrayList<BarEntry> = ArrayList()
+        val entries: ArrayList<Entry> = ArrayList()
         val title = "소음 값(dB)"
 
         ///
@@ -140,18 +146,18 @@ class SlideshowFragment : Fragment() {
 
                 //fit the data into a bar
                 for (i in 0 until valueList.size) {
-                    val barEntry = BarEntry(i.toFloat(), valueList[i].toFloat())
-                    entries.add(barEntry)
+                    val lineEntry = Entry(i.toFloat(), valueList[i].toFloat())
+                    entries.add(lineEntry)
                 }
-                val barDataSet = BarDataSet(entries, title)
-                val data = BarData(barDataSet)
+                val lineDataSet = LineDataSet(entries, title)
+                val data = LineData(lineDataSet)
                 // initBarDataSet
-                initBarDataSet(barDataSet)
+                initBarDataSet(lineDataSet)
                 // xAxis data formatter
-                barChart.xAxis.valueFormatter = MyXAxisFormatter()
+                lineChart.xAxis.valueFormatter = MyXAxisFormatter()
                 // put data & invalidate
-                barChart.data = data
-                barChart.invalidate()
+                lineChart.data = data
+                lineChart.invalidate()
             }
             .addOnFailureListener { exception ->
                 Log.d("시간", "Error getting documents: ", exception)
@@ -200,32 +206,32 @@ class SlideshowFragment : Fragment() {
         var sound: String? = null
     }
 
-    private fun initBarChart(barChart: BarChart) {
+    private fun initLineChart(lineChart: LineChart) {
 
         //hiding the grey background of the chart, default false if not set
-        barChart.setDrawGridBackground(false)
+        lineChart.setDrawGridBackground(false)
         //remove the bar shadow, default false if not set
-        barChart.setDrawBarShadow(false)
+//        lineChart.setDrawBarShadow(false)
         //remove border of the chart, default false if not set
-        barChart.setDrawBorders(false)
+        lineChart.setDrawBorders(false)
 
         //remove the description label text located at the lower right corner
         val description = Description()
         description.setEnabled(false)
-        barChart.setDescription(description)
+        lineChart.setDescription(description)
 
         //X, Y 바의 애니메이션 효과
-        barChart.animateY(1000)
-        barChart.animateX(1000)
+        lineChart.animateY(1000)
+        lineChart.animateX(1000)
 
 
         //바텀 좌표 값
-        val xAxis: XAxis = barChart.getXAxis()
+        val xAxis: XAxis = lineChart.getXAxis()
         //change the position of x-axis to the bottom
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         //set the horizontal distance of the grid line
         xAxis.granularity = 1f
-        xAxis.textColor = Color.RED
+        xAxis.textColor = Color.BLACK
         //hiding the x-axis line, default true if not set
         xAxis.setDrawAxisLine(false)
         //hiding the vertical grid lines, default true if not set
@@ -233,19 +239,19 @@ class SlideshowFragment : Fragment() {
 
 
         //좌측 값 hiding the left y-axis line, default true if not set
-        val leftAxis: YAxis = barChart.getAxisLeft()
+        val leftAxis: YAxis = lineChart.getAxisLeft()
         leftAxis.setDrawAxisLine(true)
-        leftAxis.textColor = Color.BLUE
+        leftAxis.textColor = Color.BLACK
 
 
         //우측 값 hiding the right y-axis line, default true if not set
-        val rightAxis: YAxis = barChart.getAxisRight()
+        val rightAxis: YAxis = lineChart.getAxisRight()
         rightAxis.setDrawAxisLine(false)
-        rightAxis.textColor = Color.BLUE
+        rightAxis.textColor = Color.BLACK
 
 
         //바차트의 타이틀
-        val legend: Legend = barChart.getLegend()
+        val legend: Legend = lineChart.getLegend()
         //setting the shape of the legend form to line, default square shape
         legend.form = Legend.LegendForm.SQUARE
         //setting the text size of the legend

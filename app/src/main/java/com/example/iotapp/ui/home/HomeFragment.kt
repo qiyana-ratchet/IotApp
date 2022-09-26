@@ -37,6 +37,7 @@ class HomeFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        Log.d("lifecycle","HomeFragment "+lifecycle.currentState.toString())
 
         // 2. Context를 액티비티로 형변환해서 할당
         mainActivity = context as MainActivity
@@ -54,6 +55,7 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        Log.d("lifecycle","HomeFragment "+lifecycle.currentState.toString())
 
         val homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -71,6 +73,8 @@ class HomeFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        Log.d("lifecycle","HomeFragment "+lifecycle.currentState.toString())
+
         flag = true
         thread(start = true) {
             while (flag) {
@@ -176,8 +180,19 @@ class HomeFragment : Fragment() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        Log.d("lifecycle","HomeFragment "+lifecycle.currentState.toString())
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        Log.d("lifecycle","HomeFragment "+lifecycle.currentState.toString())
+
+    }
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.d("lifecycle","HomeFragment "+lifecycle.currentState.toString())
         flag = false
         _binding = null
     }
