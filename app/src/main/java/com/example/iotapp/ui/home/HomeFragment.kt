@@ -74,7 +74,7 @@ class HomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         Log.d("lifecycle","HomeFragment "+lifecycle.currentState.toString())
-
+        //clearOldData()
         flag = true
         thread(start = true) {
             while (flag) {
@@ -155,6 +155,10 @@ class HomeFragment : Fragment() {
                 Thread.sleep(1000)    //1000 == 1초
             }
         }
+    }
+
+    private fun clearOldData() {
+        TODO("Not yet implemented")
     }
 
     private fun notifyNoise() {

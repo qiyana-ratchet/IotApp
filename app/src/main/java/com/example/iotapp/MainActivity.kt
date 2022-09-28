@@ -6,14 +6,12 @@ import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
@@ -26,9 +24,13 @@ import com.example.iotapp.databinding.ActivityMainBinding
 import com.example.iotapp.ui.home.HomeFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -64,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 //        }
         //
         val db = Firebase.firestore
-
+        clearOldData(db)
         db.collection("data")
             .whereEqualTo("TagSnapshot", "1")
             .addSnapshotListener { value, e ->
@@ -76,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 val sensorData = ArrayList<String>()
                 for (doc in value!!) {
                     doc.getString("value")?.let {
-                        sensorData.add(Gson().fromJson(it,Sensor::class.java).sound.toString())
+                        sensorData.add(Gson().fromJson(it, Sensor::class.java).sound.toString())
 
                         currentSoundValMean = meanOfSound(sensorData).toString()
                         Log.d(TAG, "Current sensor value: $currentSoundValMean")
@@ -115,6 +117,70 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
+    private fun clearOldData(db: FirebaseFirestore) {
+        db.collection("timeData")
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    Log.d(TAG, "${document.id} => ${document.data}")
+                    if (isOldData(document)) {
+                        db.collection("timeData").document(document.id)
+                            .delete().addOnSuccessListener {
+                                Log.d("오래된", "deleted")
+
+                            }
+                        Log.d("오래된", document.id)
+                    }
+                }
+                Log.d("테스트", "")
+
+
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "Error getting documents: ", exception)
+            }
+
+    }
+
+    private fun isOldData(document: QueryDocumentSnapshot): Boolean {
+        var year = document.id.substring(0, 4).toInt()
+        var month = document.id.substring(5, 7).toInt()
+        var day = document.id.substring(8, 10).toInt()
+
+        val beginDay = Calendar.getInstance().apply {
+            set(Calendar.YEAR, year)
+            set(Calendar.MONTH, month)
+            set(Calendar.DAY_OF_MONTH, day)
+        }.timeInMillis
+
+        val year2 = Calendar.getInstance().get(Calendar.YEAR)
+        val month2 = Calendar.getInstance().get(Calendar.MONTH)
+        val day2 = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+
+        val today = Calendar.getInstance().apply {
+            set(Calendar.YEAR, year2)
+            set(Calendar.MONTH, month2 + 1)
+            set(Calendar.DAY_OF_MONTH, day2)
+        }.timeInMillis
+
+
+        val dateDif = getIgnoredTimeDays(today) - getIgnoredTimeDays(beginDay)
+        Log.d("오래된", "$year, $month, $day, $year2, $month2, $day2, $beginDay, $today, $dateDif, ")
+
+        return dateDif > 1;
+    }
+
+    private fun getIgnoredTimeDays(time: Long): Long {
+        return Calendar.getInstance().apply {
+            timeInMillis = time
+
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
@@ -131,26 +197,31 @@ class MainActivity : AppCompatActivity() {
         for (num in list) {
             sum += num.toInt()
         }
-        return sum/(list.size)
+        return sum / (list.size)
     }
+
     class Sensor {
         var sound: String? = null
     }
+
     var CHANNEL_ID = "My_Notification"
 
-    fun createNotification(){
+    fun createNotification() {
         // Create an explicit intent for an Activity in your app
         val intent = Intent(this, HomeFragment::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(this, 0, intent, FLAG_IMMUTABLE)
 
         var builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle("My notification")
             .setContentText("Much longer text that cannot fit one line...")
-            .setStyle(NotificationCompat.BigTextStyle()
-                .bigText("Much longer text that cannot fit one line..."))
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText("Much longer text that cannot fit one line...")
+            )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             // Set the intent that will fire when the user taps the notification
             .setContentIntent(pendingIntent)
