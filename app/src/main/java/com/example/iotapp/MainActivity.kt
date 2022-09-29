@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun isOldData(document: QueryDocumentSnapshot): Boolean {
         var year = document.id.substring(0, 4).toInt()
-        var month = document.id.substring(5, 7).toInt()
+        var month = document.id.substring(5, 7).toInt()-1
         var day = document.id.substring(8, 10).toInt()
 
         val beginDay = Calendar.getInstance().apply {
@@ -159,7 +159,7 @@ class MainActivity : AppCompatActivity() {
 
         val today = Calendar.getInstance().apply {
             set(Calendar.YEAR, year2)
-            set(Calendar.MONTH, month2 + 1)
+            set(Calendar.MONTH, month2)
             set(Calendar.DAY_OF_MONTH, day2)
         }.timeInMillis
 

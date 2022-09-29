@@ -63,10 +63,6 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
 
         return root
     }
@@ -80,7 +76,10 @@ class HomeFragment : Fragment() {
             while (flag) {
                 mainActivity.runOnUiThread {    //Ui에 접근할 수 있음
                     notifCooltime+=1
-                    val convertedDecibelValue = (-3 * currentSoundValMean.toInt() / 40) + 95
+                    var convertedDecibelValue = (-3 * currentSoundValMean.toInt() / 40) + 95
+                    if(currentSoundValMean.toInt()==0){
+                        convertedDecibelValue=0
+                    }
                     binding.soundValue.text = convertedDecibelValue.toString() + "dB"
                     binding.resultText.text = "수신중..."
                     var hourOfDay =
@@ -166,11 +165,11 @@ class HomeFragment : Fragment() {
             var builder = NotificationCompat.Builder(mainActivity, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_stat_yoga_mat)
                 .setColor(Color.valueOf(0.14118F, 0.75686F, 1.00000F).toArgb())
-                .setContentTitle("IotApp")
-                .setContentText("소음 발생이 감지되었습니다.")
+                .setContentTitle("!주의! 층간소음 발생")
+                .setContentText("$currentSoundValMean 데시벨입니다. 주의해 주세요!")
                 .setStyle(
                     NotificationCompat.BigTextStyle()
-                        .bigText("아래층에 소음이 전해지고 있어요 :(")
+                        .bigText("$currentSoundValMean 데시벨입니다. 주의해 주세요!")
                 )
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 // Set the intent that will fire when the user taps the notification
