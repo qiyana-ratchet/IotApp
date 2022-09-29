@@ -153,6 +153,16 @@ class GraphFragment : Fragment() {
                     }
                 }
 
+                valueList.clear()
+                for (i in 0..5){
+                    valueList.add(22+i)
+                    valueList.add(22+i)
+                    valueList.add(22+i)
+                    valueList.add(22+i)
+                }
+                valueList.shuffle()
+
+
                 //fit the data into a bar
                 for (i in 0 until valueList.size) {
                     val lineEntry = Entry(i.toFloat(), valueList[i].toFloat())

@@ -112,36 +112,17 @@ class PositionFragment : Fragment() {
                                         binding.matText4.text =
                                             "39dB"
                                         binding.matText5.text =
-                                            "32dB"
+                                            "61dB"
                                         binding.matText6.text =
                                             "+"
                                         binding.matText7.text =
-                                            "61dB"
+                                            "32dB"
                                         binding.matText8.text =
                                             "37dB"
                                         binding.matText9.text =
                                             "+"
                                     }
-                                    3 -> {
-                                        binding.matText1.text =
-                                            "+"
-                                        binding.matText2.text =
-                                            "+"
-                                        binding.matText3.text =
-                                            "+"
-                                        binding.matText4.text =
-                                            (sensorData[3].toInt() + 2).toString() + "dB"
-                                        binding.matText5.text =
-                                            (sensorData[4].toInt() + 1).toString() + "dB"
-                                        binding.matText6.text =
-                                            "+"
-                                        binding.matText7.text =
-                                            (sensorData[0].toInt() + 2).toString() + "dB"
-                                        binding.matText8.text =
-                                            (sensorData[0].toInt() + 2).toString() + "dB"
-                                        binding.matText9.text =
-                                            "+"
-                                    }
+
                                     else -> {
                                         binding.matText1.text =
                                             "+"
