@@ -2,8 +2,8 @@
     <string name="app_name">IotApp</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Iot 층간 소음 측정앱</string>
-    <string name="nav_header_subtitle">중앙대학교 어쩌구팀 저쩌구..</string>
+    <string name="nav_header_title">층간 소음 알리미</string>
+    <string name="nav_header_subtitle">쿵쿵따 팀</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">설정</string>
 
@@ -13,4 +13,5 @@
     <string name="menu_vod">층간소음 교육 vod</string>
     <string name="channel_name">테스트이름</string>
     <string name="channel_description">이건테스트설명</string>
+    <string name="n_57db_n_52db">층간소음 기준\n주간&#160;&#160;-&#160;&#160;57dB\n야간&#160;&#160;-&#160;&#160;52dB</string>
 </resources>
