@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.iotapp.R
 import com.example.iotapp.databinding.FragmentSlideshowBinding
-import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.*
@@ -22,7 +21,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 
-class SlideshowFragment : Fragment() {
+class GraphFragment : Fragment() {
 
     var barChart: LineChart? = null
     private var _binding: FragmentSlideshowBinding? = null
@@ -38,9 +37,9 @@ class SlideshowFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d("lifecycle","SlideShowFragment "+lifecycle.currentState.toString())
-        val slideshowViewModel =
-            ViewModelProvider(this).get(SlideshowViewModel::class.java)
+        Log.d("lifecycle", "SlideShowFragment " + lifecycle.currentState.toString())
+        val graphViewModel =
+            ViewModelProvider(this).get(GraphViewModel::class.java)
 
         _binding = FragmentSlideshowBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -53,7 +52,7 @@ class SlideshowFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("lifecycle","SlideShowFragment "+lifecycle.currentState.toString())
+        Log.d("lifecycle", "SlideShowFragment " + lifecycle.currentState.toString())
         _binding = null
     }
 
@@ -83,16 +82,16 @@ class SlideshowFragment : Fragment() {
     class MyXAxisFormatter : ValueFormatter() {
         var currentDateTime: LocalDateTime = LocalDateTime.now()
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-            var currentTime = currentDateTime.toString().substring(11,13).toInt()
+            var currentTime = currentDateTime.toString().substring(11, 13).toInt()
             val tmpDays = ArrayList<String>()
-            for (i in 0..24){
-                if(currentTime+i>=24){
-                    tmpDays.add((currentTime + i-24).toString()+"시")
-                }else {
-                    tmpDays.add((currentTime + i).toString()+"시")
+            for (i in 0..24) {
+                if (currentTime + i >= 24) {
+                    tmpDays.add((currentTime + i - 24).toString() + "시")
+                } else {
+                    tmpDays.add((currentTime + i).toString() + "시")
                 }
             }
-            val days:Array<String> = tmpDays.toTypedArray()
+            val days: Array<String> = tmpDays.toTypedArray()
 
             return days.getOrNull(value.toInt()) ?: value.toString()
         }
@@ -129,7 +128,12 @@ class SlideshowFragment : Fragment() {
                     ) {
                         Log.d("시간", "${document.data["value"]}")
 
-                        timeData.add(Gson().fromJson(document.data["value"].toString(), Sensor::class.java).sound.toString())
+                        timeData.add(
+                            Gson().fromJson(
+                                document.data["value"].toString(),
+                                Sensor::class.java
+                            ).sound.toString()
+                        )
                     }
                 }
                 makeTimeData()
@@ -138,10 +142,15 @@ class SlideshowFragment : Fragment() {
                 ///
                 //input data
                 for (i in 0..23) {
-                    if(i>=timeData.size){
-                        valueList.add(timeData[timeData.size-1].toInt())
+                    if (timeData.size != 0) {
+                        if (i >= timeData.size) {
+                            valueList.add(timeData[timeData.size - 1].toInt())
+                        }
+                        valueList.add(timeData[i].toInt())
+                    }else{
+                        Log.d("시간", "데이터 받은게 없음")
+
                     }
-                    valueList.add(timeData[i].toInt())
                 }
 
                 //fit the data into a bar
@@ -187,17 +196,18 @@ class SlideshowFragment : Fragment() {
     }
 
     private fun makeTimeData() {
-        var count=0
-        var tmp=-999
-        for(i: Int in 0 until timeData.size){
-            if(tmp<timeData[i].toInt()){
-                tmp=timeData[i].toInt()
+        Log.d("시간", "Make Time Data..")
+        var count = 0
+        var tmp = -999
+        for (i: Int in 0 until timeData.size) {
+            if (tmp < timeData[i].toInt()) {
+                tmp = timeData[i].toInt()
             }
-            count+=1
-            if(count==12){
+            count += 1
+            if (count == 12) {
                 tmpData.add(tmp.toString());
-                tmp=-999
-                count=0
+                tmp = -999
+                count = 0
             }
         }
     }
