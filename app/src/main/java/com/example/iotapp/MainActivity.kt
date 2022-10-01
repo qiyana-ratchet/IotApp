@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
@@ -20,6 +21,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.iotapp.SoundData.currentSoundValMean
+import com.example.iotapp.SoundData.isNotify
 import com.example.iotapp.databinding.ActivityMainBinding
 import com.example.iotapp.ui.home.HomeFragment
 import com.google.android.material.navigation.NavigationView
@@ -100,8 +102,19 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.appBarMain.toolbar)
 
         binding.appBarMain.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            if (isNotify) {
+                isNotify = false
+                Snackbar.make(view, "이제부터 알림을 수신하지 않습니다.", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+                binding.appBarMain.fab.backgroundTintList = ContextCompat.getColorStateList(this,R.color.notif_button_off)
+
+            }else{
+                isNotify = true
+                Snackbar.make(view, "알림을 수신합니다.", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+                binding.appBarMain.fab.backgroundTintList = ContextCompat.getColorStateList(this,R.color.notif_button_on)
+
+            }
         }
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
@@ -144,7 +157,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun isOldData(document: QueryDocumentSnapshot): Boolean {
         var year = document.id.substring(0, 4).toInt()
-        var month = document.id.substring(5, 7).toInt()-1
+        var month = document.id.substring(5, 7).toInt() - 1
         var day = document.id.substring(8, 10).toInt()
 
         val beginDay = Calendar.getInstance().apply {

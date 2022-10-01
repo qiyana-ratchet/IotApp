@@ -23,7 +23,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.iotapp.MainActivity
 import com.example.iotapp.R
+import com.example.iotapp.SoundData
 import com.example.iotapp.SoundData.currentSoundValMean
+import com.example.iotapp.SoundData.isNotify
 import com.example.iotapp.databinding.FragmentHomeBinding
 import java.text.SimpleDateFormat
 import kotlin.concurrent.thread
@@ -37,7 +39,7 @@ class HomeFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        Log.d("lifecycle","HomeFragment "+lifecycle.currentState.toString())
+        Log.d("lifecycle", "HomeFragment " + lifecycle.currentState.toString())
 
         // 2. Context를 액티비티로 형변환해서 할당
         mainActivity = context as MainActivity
@@ -55,7 +57,7 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d("lifecycle","HomeFragment "+lifecycle.currentState.toString())
+        Log.d("lifecycle", "HomeFragment " + lifecycle.currentState.toString())
 
         val homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -69,16 +71,16 @@ class HomeFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        Log.d("lifecycle","HomeFragment "+lifecycle.currentState.toString())
+        Log.d("lifecycle", "HomeFragment " + lifecycle.currentState.toString())
         //clearOldData()
         flag = true
         thread(start = true) {
             while (flag) {
                 mainActivity.runOnUiThread {    //Ui에 접근할 수 있음
-                    notifCooltime+=1
+                    notifCooltime += 1
                     var convertedDecibelValue = (-3 * currentSoundValMean.toInt() / 40) + 95
-                    if(currentSoundValMean.toInt()==0){
-                        convertedDecibelValue=0
+                    if (currentSoundValMean.toInt() == 0) {
+                        convertedDecibelValue = 0
                     }
                     binding.soundValue.text = convertedDecibelValue.toString() + "dB"
                     binding.resultText.text = "수신중..."
@@ -145,7 +147,7 @@ class HomeFragment : Fragment() {
 //                    val pendingIntent: PendingIntent = PendingIntent.getActivity(mainActivity, 0, intent,
 //                        PendingIntent.FLAG_IMMUTABLE
 //                    )
-                    if (convertedDecibelValue>52) {
+                    if (convertedDecibelValue > 52) {
 
                     }
 
@@ -161,41 +163,44 @@ class HomeFragment : Fragment() {
     }
 
     private fun notifyNoise() {
-        if(notifCooltime>=60) {
-            var builder = NotificationCompat.Builder(mainActivity, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_stat_yoga_mat)
-                .setColor(Color.valueOf(0.14118F, 0.75686F, 1.00000F).toArgb())
-                .setContentTitle("!주의! 층간소음 발생")
-                .setContentText("$currentSoundValMean 데시벨입니다. 주의해 주세요!")
-                .setStyle(
-                    NotificationCompat.BigTextStyle()
-                        .bigText("$currentSoundValMean 데시벨입니다. 주의해 주세요!")
-                )
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                // Set the intent that will fire when the user taps the notification
-                // .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-            with(NotificationManagerCompat.from(mainActivity)) {
-                // notificationId is a unique int for each notification that you must define
-                notify(1, builder.build())
+        if (isNotify) {
+            if (notifCooltime >= 60) {
+                var builder = NotificationCompat.Builder(mainActivity, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_stat_yoga_mat)
+                    .setColor(Color.valueOf(0.14118F, 0.75686F, 1.00000F).toArgb())
+                    .setContentTitle("!주의! 층간소음 발생")
+                    .setContentText("$currentSoundValMean 데시벨입니다. 주의해 주세요!")
+                    .setStyle(
+                        NotificationCompat.BigTextStyle()
+                            .bigText("$currentSoundValMean 데시벨입니다. 주의해 주세요!")
+                    )
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    // Set the intent that will fire when the user taps the notification
+                    // .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
+                with(NotificationManagerCompat.from(mainActivity)) {
+                    // notificationId is a unique int for each notification that you must define
+                    notify(1, builder.build())
+                }
+                notifCooltime = 0
             }
-            notifCooltime = 0
         }
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d("lifecycle","HomeFragment "+lifecycle.currentState.toString())
+        Log.d("lifecycle", "HomeFragment " + lifecycle.currentState.toString())
     }
 
     override fun onDetach() {
         super.onDetach()
-        Log.d("lifecycle","HomeFragment "+lifecycle.currentState.toString())
+        Log.d("lifecycle", "HomeFragment " + lifecycle.currentState.toString())
 
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("lifecycle","HomeFragment "+lifecycle.currentState.toString())
+        Log.d("lifecycle", "HomeFragment " + lifecycle.currentState.toString())
         flag = false
         _binding = null
     }
