@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.iotapp.MainActivity
 import com.example.iotapp.R
 import com.example.iotapp.SoundData.currentSoundValMean
+import com.example.iotapp.SoundData.isNotify
 import com.example.iotapp.databinding.FragmentGalleryBinding
 import com.example.iotapp.ui.home.HomeFragment
 import com.google.firebase.firestore.ktx.firestore
@@ -178,25 +179,27 @@ class PositionFragment : Fragment() {
     }
 
     private fun notifyNoise() {
-        if(notifCooltime>=60) {
-            var builder = NotificationCompat.Builder(mainActivity, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_stat_yoga_mat)
-                .setColor(Color.valueOf(0.14118F, 0.75686F, 1.00000F).toArgb())
-                .setContentTitle("!주의! 층간소음 발생")
-                .setContentText("$currentSoundValMean 데시벨입니다. 주의해 주세요!")
-                .setStyle(
-                    NotificationCompat.BigTextStyle()
-                        .bigText("$currentSoundValMean 데시벨입니다. 주의해 주세요!")
-                )
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                // Set the intent that will fire when the user taps the notification
-                // .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-            with(NotificationManagerCompat.from(mainActivity)) {
-                // notificationId is a unique int for each notification that you must define
-                notify(1, builder.build())
+        if (isNotify) {
+            if (notifCooltime >= 60) {
+                var builder = NotificationCompat.Builder(mainActivity, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_stat_yoga_mat)
+                    .setColor(Color.valueOf(0.14118F, 0.75686F, 1.00000F).toArgb())
+                    .setContentTitle("!주의! 층간소음 발생")
+                    .setContentText("$currentSoundValMean 데시벨입니다. 주의해 주세요!")
+                    .setStyle(
+                        NotificationCompat.BigTextStyle()
+                            .bigText("$currentSoundValMean 데시벨입니다. 주의해 주세요!")
+                    )
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    // Set the intent that will fire when the user taps the notification
+                    // .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
+                with(NotificationManagerCompat.from(mainActivity)) {
+                    // notificationId is a unique int for each notification that you must define
+                    notify(1, builder.build())
+                }
+                notifCooltime = 0
             }
-            notifCooltime = 0
         }
     }
 
