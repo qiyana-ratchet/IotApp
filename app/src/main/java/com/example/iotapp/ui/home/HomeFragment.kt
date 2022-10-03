@@ -40,11 +40,9 @@ class HomeFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         Log.d("lifecycle", "HomeFragment " + lifecycle.currentState.toString())
-
         // 2. Context를 액티비티로 형변환해서 할당
         mainActivity = context as MainActivity
     }
-    ///
 
     private var _binding: FragmentHomeBinding? = null
 
@@ -58,13 +56,11 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         Log.d("lifecycle", "HomeFragment " + lifecycle.currentState.toString())
-
         val homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
 
         return root
     }
@@ -72,7 +68,6 @@ class HomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         Log.d("lifecycle", "HomeFragment " + lifecycle.currentState.toString())
-        //clearOldData()
         flag = true
         thread(start = true) {
             while (flag) {
@@ -87,7 +82,6 @@ class HomeFragment : Fragment() {
                     var hourOfDay =
                         SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis()).toString()
                             .substring(0, 1).toInt()
-//                    var hourOfDay = 7
                     Log.d(
                         "테스트",
                         SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis()).toString()
@@ -139,27 +133,10 @@ class HomeFragment : Fragment() {
                         }
                     }
 
-                    //
-                    // Create an explicit intent for an Activity in your app
-//                    val intent = Intent(this, HomeFragment::class.java).apply {
-//                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//                    }
-//                    val pendingIntent: PendingIntent = PendingIntent.getActivity(mainActivity, 0, intent,
-//                        PendingIntent.FLAG_IMMUTABLE
-//                    )
-                    if (convertedDecibelValue > 52) {
-
-                    }
-
                 }
-                //
                 Thread.sleep(1000)    //1000 == 1초
             }
         }
-    }
-
-    private fun clearOldData() {
-        TODO("Not yet implemented")
     }
 
     private fun notifyNoise() {
@@ -185,17 +162,6 @@ class HomeFragment : Fragment() {
                 notifCooltime = 0
             }
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d("lifecycle", "HomeFragment " + lifecycle.currentState.toString())
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        Log.d("lifecycle", "HomeFragment " + lifecycle.currentState.toString())
-
     }
 
     override fun onDestroyView() {

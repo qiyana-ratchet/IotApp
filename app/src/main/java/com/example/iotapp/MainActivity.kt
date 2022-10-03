@@ -42,31 +42,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen() // 스플래시
         createNotificationChannel() // 알림 등록
-//        createNotification()
         super.onCreate(savedInstanceState)
-        //
-//        // Create an explicit intent for an Activity in your app
-//        val intent = Intent(this, HomeFragment::class.java).apply {
-//            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//        }
-//        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, FLAG_IMMUTABLE)
-//
-//        var builder = NotificationCompat.Builder(this, CHANNEL_ID)
-//            .setSmallIcon(R.drawable.ic_stat_yoga_mat)
-//            .setColor(Color.valueOf(0.14118F  ,0.75686F,  1.00000F).toArgb())
-//            .setContentTitle("IotApp")
-//            .setContentText("소음 발생이 감지되었습니다.")
-//            .setStyle(NotificationCompat.BigTextStyle()
-//                .bigText("아래층에 소음이 전해지고 있어요 :("))
-//            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//            // Set the intent that will fire when the user taps the notification
-//            .setContentIntent(pendingIntent)
-//            .setAutoCancel(true)
-//        with(NotificationManagerCompat.from(this)) {
-//            // notificationId is a unique int for each notification that you must define
-//            notify(1, builder.build())
-//        }
-        //
+
         val db = Firebase.firestore
         clearOldData(db)
         db.collection("data")
@@ -91,13 +68,8 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "Current sensor data list: $sensorData")
             }
 
-        //
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        ///
-
-        ///
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
@@ -140,14 +112,10 @@ class MainActivity : AppCompatActivity() {
                         db.collection("timeData").document(document.id)
                             .delete().addOnSuccessListener {
                                 Log.d("오래된", "deleted")
-
                             }
                         Log.d("오래된", document.id)
                     }
                 }
-                Log.d("테스트", "")
-
-
             }
             .addOnFailureListener { exception ->
                 Log.d(TAG, "Error getting documents: ", exception)
@@ -218,28 +186,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     var CHANNEL_ID = "My_Notification"
-
-    fun createNotification() {
-        // Create an explicit intent for an Activity in your app
-        val intent = Intent(this, HomeFragment::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-        val pendingIntent: PendingIntent =
-            PendingIntent.getActivity(this, 0, intent, FLAG_IMMUTABLE)
-
-        var builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("My notification")
-            .setContentText("Much longer text that cannot fit one line...")
-            .setStyle(
-                NotificationCompat.BigTextStyle()
-                    .bigText("Much longer text that cannot fit one line...")
-            )
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            // Set the intent that will fire when the user taps the notification
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
-    }
 
     private fun createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because

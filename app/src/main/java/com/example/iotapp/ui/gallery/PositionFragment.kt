@@ -16,14 +16,12 @@ import com.example.iotapp.R
 import com.example.iotapp.SoundData.currentSoundValMean
 import com.example.iotapp.SoundData.isNotify
 import com.example.iotapp.databinding.FragmentGalleryBinding
-import com.example.iotapp.ui.home.HomeFragment
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import kotlin.concurrent.thread
 
 class PositionFragment : Fragment() {
-    ///
     private var flag = true
     lateinit var mainActivity: MainActivity
     var sensorData: ArrayList<String> = arrayListOf("0", "0", "0", "0", "0", "0", "0", "0", "0")
@@ -40,7 +38,6 @@ class PositionFragment : Fragment() {
         mainActivity = context as MainActivity
     }
 
-    ///
     private var _binding: FragmentGalleryBinding? = null
 
     // This property is only valid between onCreateView and
@@ -58,26 +55,13 @@ class PositionFragment : Fragment() {
 
         _binding = FragmentGalleryBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        ///
-        binding.matText1.setOnClickListener {
-            Log.d("테스트", "1클릭됨")
-        }
-
-        ///
-
 
         return root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
     }
 
     override fun onStart() {
         super.onStart()
         Log.d("lifecycle", "GalleryFragment " + lifecycle.currentState.toString())
-        ///
 
         flag = true
         thread(start = true) {

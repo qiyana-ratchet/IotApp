@@ -46,7 +46,6 @@ class GraphFragment : Fragment() {
 
         setChartView(binding.root)
 
-
         return root
     }
 
@@ -108,7 +107,6 @@ class GraphFragment : Fragment() {
         val entries: ArrayList<Entry> = ArrayList()
         val title = "소음 값(dB)"
 
-        ///
         val db = Firebase.firestore
         db.collection("timeData")
             .get()
@@ -119,9 +117,6 @@ class GraphFragment : Fragment() {
                     Log.d("시간", LocalDate.now().toString().substring(8, 10))
                     Log.d("시간", document.id.toString().substring(8, 10))
 
-//                    Log.d("시간", document.data.toString().length.toString())
-//                    timeData.add(document.data.toString().length.toString())
-//                    Log.d("시간", timeData.toString())
 
                     if (LocalDate.now().toString().substring(8, 10)
                             .toInt() - document.id.toString().substring(8, 10).toInt() <= 1
@@ -139,7 +134,6 @@ class GraphFragment : Fragment() {
                 makeTimeData()
                 Log.d("시간", timeData.toString())
                 Log.d("시간", tmpData.toString())
-                ///
                 //input data
                 for (i in 0..23) {
                     if (timeData.size != 0) {
@@ -181,28 +175,6 @@ class GraphFragment : Fragment() {
             .addOnFailureListener { exception ->
                 Log.d("시간", "Error getting documents: ", exception)
             }
-        ///
-
-//        //input data
-//        for (i in 0..24) {
-//            if(i>=timeData.size){
-//                valueList.add(timeData[timeData.size-1].toDouble())
-//            }
-//            valueList.add(timeData[i].toDouble())
-//        }
-//
-//        //fit the data into a bar
-//        for (i in 0 until valueList.size) {
-//            val barEntry = BarEntry(i.toFloat(), valueList[i].toFloat())
-//            entries.add(barEntry)
-//        }
-//        val barDataSet = BarDataSet(entries, title)
-//        val data = BarData(barDataSet)
-//        ///
-//        initBarDataSet(barDataSet)
-//        ///
-//        barChart.data = data
-//        barChart.invalidate()
     }
 
     private fun makeTimeData() {
